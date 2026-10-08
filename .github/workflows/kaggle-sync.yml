@@ -1,0 +1,50 @@
+name: Sync notebook to Kaggle (manual)
+
+# 可选的自动同步：把 notebooks/kaggle_persona_lora.ipynb 推到你的 Kaggle 账号。
+# 启用步骤（一次性）：
+#   1. https://www.kaggle.com/settings → API → Create New Token（得到 kaggle.json，
+#      里面有 username 和 key）
+#   2. 本仓库 Settings → Secrets and variables → Actions → New repository secret：
+#      KAGGLE_USERNAME = 你的用户名
+#      KAGGLE_KEY      = token 里的 key
+#   3. Actions → Sync notebook to Kaggle → Run workflow
+#
+# 数据集说明：metadata 默认挂载 <用户名>/my-persona-data；若该数据集不存在，
+# 脚本会自动降级为不挂载（到 Kaggle UI 手动 Add Input 即可）。
+
+on:
+  workflow_dispatch:
+    inputs:
+      attach_dataset:
+        description: "预挂载数据集 my-persona-data（不存在则自动跳过）"
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+jobs:
+  push-to-kaggle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install kaggle CLI
+        run: pip install kaggle
+
+      - name: Auth
+        run: |
+          mkdir -p ~/.kaggle
+          printf '{"username":"%s","key":"%s"}' \
+            "${{ secrets.KAGGLE_USERNAME }}" "${{ secrets.KAGGLE_KEY }}" \
+            > ~/.kaggle/kaggle.json
+          chmod 600 ~/.kaggle/kaggle.json
+
+      - name: Push kernel
+        env:
+          ATTACH: ${{ inputs.attach_dataset && '' || '--no-dataset' }}
+        run: ./scripts/sync_kaggle.sh push ${ATTACH}

@@ -86,7 +86,7 @@ streamlit run app/Home.py
 
 #### 4. Kaggle 一键训练
 
-工作台「导出训练」页下载 `train.jsonl` → 按 [docs/kaggle_guide.md](docs/kaggle_guide.md) 上传运行 `notebooks/kaggle_persona_lora.ipynb`（免费 T4，默认 Qwen3.5-6B + 4bit + LoRA r16 + epoch 3 + 早停，约 2-3 小时，产出几十 MB 适配器）。
+工作台「导出训练」页下载 `train.jsonl` → 同步 Notebook 到你的 Kaggle（三选一，见 [docs/kaggle_guide.md](docs/kaggle_guide.md)）：GitHub 链接导入 / `./scripts/sync_kaggle.sh push` 一键同步（自动预配 GPU·Internet·数据集）/ 手动上传。免费 T4，默认 Qwen3.5-6B + 4bit + LoRA r16 + epoch 3 + 早停，约 2-3 小时，产出几十 MB 适配器。
 
 #### 5. 本地部署你的分身
 

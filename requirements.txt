@@ -9,6 +9,9 @@ tqdm>=4.66
 # 本地 Embedding（IM 历史记录向量检索，首次使用自动下载模型，全程本地）
 sentence-transformers>=2.7
 
+# Kaggle Notebook 同步（可选：./scripts/sync_kaggle.sh push/pull）
+kaggle>=1.6
+
 # ---- 可选（仅本地部署阶段需要，采集/审核阶段无需安装）----
 # Mac MLX 推理:        pip install mlx-lm
 # Ollama / llama.cpp:  见 docs/hardware.md
