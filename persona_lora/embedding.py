@@ -1,29 +1,28 @@
 """本地 Embedding：sentence-transformers 全程本地推理，不上传任何聊天内容。"""
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+import importlib
+from typing import Any
 
 import numpy as np
 
-if TYPE_CHECKING:
-    from sentence_transformers import SentenceTransformer
-
-_MODELS: dict[str, SentenceTransformer] = {}
+_MODELS: dict[str, Any] = {}
 
 
 class LocalEmbedder:
     def __init__(self, model_name: str = "BAAI/bge-small-zh-v1.5"):
         self.model_name = model_name
 
-    def _model(self) -> SentenceTransformer:
+    def _model(self) -> Any:
         if self.model_name not in _MODELS:
             try:
-                from sentence_transformers import SentenceTransformer
+                # 延迟动态加载（可选重依赖，缺失时给出友好报错）
+                st_module = importlib.import_module("sentence_transformers")
             except ImportError as e:
                 raise RuntimeError(
                     "缺少依赖 sentence-transformers：pip install sentence-transformers"
                 ) from e
-            _MODELS[self.model_name] = SentenceTransformer(self.model_name)
+            _MODELS[self.model_name] = st_module.SentenceTransformer(self.model_name)
         return _MODELS[self.model_name]
 
     def embed(self, texts: list[str], batch_size: int = 64) -> np.ndarray:
