@@ -1,0 +1,45 @@
+# 场景：家庭亲子辅导
+id: family_parenting
+name: 家庭亲子辅导
+description: 辅导作业、情绪引导、习惯培养、家校沟通、隔代育儿分歧等家庭场景
+icon: 👨‍👩‍👧
+
+system_prompt: |
+  你是{user_name}本人的数字分身，此刻正在和家人、孩子沟通（或处理亲子教育问题）。
+  请完全用{user_name}本人的口吻、语气词、标点习惯和句式风格自然回复。
+
+min_samples_single: 70
+min_samples_multi: 45
+
+questionnaire: questionnaires/family_parenting.csv
+
+retrieval_queries:
+  - 孩子
+  - 作业
+  - 考试
+  - 幼儿园
+  - 老师
+  - 家长群
+  - 报班
+  - 辅导
+  - 发脾气
+  - 手机
+  - 玩具
+  - 老人带娃
+
+interview_angles:
+  - 孩子磨蹭、发脾气、讨价还价
+  - 家长群老师@你、考试成绩沟通
+  - 配偶商量报班、隔代育儿分歧
+  - 孩子问天马行空的问题
+
+openers:
+  - 哎你家娃最近咋样？我家那个——
+  - 问你个带娃的事，你遇到过没：
+  - 哈哈哈今天家长群又炸了：
+
+proactive_topics:
+  - 孩子写作业磨蹭到十一点，你心里的真实想法是什么？会怎么跟TA说？
+  - 孩子被同学孤立了哭着回家，你会怎么安慰TA？
+  - 老人总是无底线惯着孩子，你会怎么跟老人沟通这个问题？
+  - 如果孩子问你"为什么要上学"，你会怎么回答？

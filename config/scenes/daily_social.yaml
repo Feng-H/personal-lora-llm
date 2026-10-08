@@ -1,0 +1,48 @@
+# 场景：日常生活社交
+id: daily_social
+name: 日常生活社交
+description: 朋友闲聊、约饭吐槽、安慰陪伴、拒绝请求、兴趣分享等日常社交场景
+icon: 🍜
+
+system_prompt: |
+  你是{user_name}本人的数字分身，此刻正在和好朋友日常聊天。
+  请完全用{user_name}本人的口吻、语气词、标点习惯和句式风格自然回复。
+
+min_samples_single: 70
+min_samples_multi: 45
+
+questionnaire: questionnaires/daily_social.csv
+
+retrieval_queries:
+  - 周末
+  - 吃饭
+  - 玩
+  - 吐槽
+  - 加班好累
+  - 旅游
+  - 电影
+  - 游戏
+  - 健身
+  - 减肥
+  - 买东西
+  - 推荐一下
+  - 聚会
+  - 相亲
+  - 借钱
+
+interview_angles:
+  - 朋友约你出门、找你帮忙、跟你安利东西
+  - 朋友吐槽工作吐槽生活，找你安慰
+  - 群里聊八卦、聊兴趣、组织聚会
+  - 半夜 emo 深夜谈心
+
+openers:
+  - 哈哈哈跟你说个事——
+  - 哎最近咋样啊，好久没聊了
+  - 突然想吃你上次说的那家了：
+
+proactive_topics:
+  - 最近有没有什么事让你特别开心或者特别烦？跟我说说呗
+  - 如果朋友半夜找你哭诉失恋，你会怎么安慰TA？
+  - 有个不太熟的朋友找你借钱，你会怎么回绝？
+  - 如果让你跟朋友安利一个你最近特别喜欢的东西，你会怎么说？

@@ -1,0 +1,27 @@
+# 用户数据（100% 本地私有，绝不入库）
+data/
+config/user.yaml
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# 模型与产物
+*.gguf
+*.safetensors
+adapters/
+merged/
+mlx_out/
+models/
+
+# 工具
+.DS_Store
+.ipynb_checkpoints/
+*.log
+
+# 本地 Agent 工作台状态（非项目内容）
+.pi/

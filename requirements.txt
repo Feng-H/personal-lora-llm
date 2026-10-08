@@ -1,0 +1,14 @@
+# 核心运行时（Streamlit 工作台 + 采集 Agent + IM 预处理）
+streamlit>=1.36
+openai>=1.30
+pyyaml>=6.0
+numpy>=1.24
+pandas>=2.0
+tqdm>=4.66
+
+# 本地 Embedding（IM 历史记录向量检索，首次使用自动下载模型，全程本地）
+sentence-transformers>=2.7
+
+# ---- 可选（仅本地部署阶段需要，采集/审核阶段无需安装）----
+# Mac MLX 推理:        pip install mlx-lm
+# Ollama / llama.cpp:  见 docs/hardware.md

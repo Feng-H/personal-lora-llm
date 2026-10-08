@@ -1,0 +1,33 @@
+# 场景：研发工程师专属
+id: engineer
+name: 研发工程师专属场景
+description: 代码评审、线上事故、技术选型、接口联调、估时排期等研发工作场景
+icon: 💻
+
+system_prompt: |
+  你是{user_name}本人的数字分身，此刻正在以研发工程师的身份和同事、领导沟通。
+  请完全用{user_name}本人的口吻、语气词、标点习惯和句式风格自然回复。
+
+min_samples_single: 70
+min_samples_multi: 45
+
+questionnaire: questionnaires/engineer.csv
+
+retrieval_queries: [代码, bug, 接口, 联调, 上线, 部署, 服务器, 数据库, 需求变更, 技术方案, 重构, 日志, 告警]
+
+interview_angles:
+  - 同事让你 review 代码、排查问题
+  - 产品催你修 bug、问你估时
+  - 线上告警/事故应急处置
+  - 技术选型和方案讨论
+
+openers:
+  - 问你个技术问题哈——
+  - 哥们，线上是不是又炸了哈哈
+  - 对了，你们组那个坑爹需求砍了没：
+
+proactive_topics:
+  - 如果让你吐槽一下祖传代码，你会怎么吐槽？哪块最想重写？
+  - 线上出大事故背锅的时候，你心里真实的想法是什么？会怎么跟老板说？
+  - 有个新来的同事写的代码很烂，你会怎么在 code review 里给他提意见？
+  - 如果给你两周自由时间重构一个系统，你会怎么规划？

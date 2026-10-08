@@ -1,0 +1,43 @@
+# ============================================================
+# Personal Persona LoRA —— 全局系统配置（默认值）
+# 用户个性化配置（昵称、勾选的场景等）保存在 config/user.yaml（已 gitignore）
+# ============================================================
+
+user:
+  name: ""                     # 你的昵称，用于系统提示词（可留空，留空则用"你"）
+  mode: single                 # single=单场景专精（新手推荐） | multi=多场景全能
+  scenes: [work_communication] # 勾选的场景 id 列表（见 config/scenes/）
+
+llm:
+  # 本地 OpenAI 兼容服务（Ollama / LM Studio / llama.cpp server 均可）
+  # 采集对话的 AI 采访者、IM 抽取质检都走这里，全程本地私有
+  base_url: http://localhost:11434/v1
+  model: qwen3:8b
+  api_key: ollama
+  temperature: 0.85
+  max_tokens: 512
+
+embedding:
+  model: BAAI/bge-small-zh-v1.5   # 本地向量模型（首次使用自动下载，约100MB）
+  scene_sim_threshold: 0.32       # IM 窗口与场景的相似度阈值（0~1，越小越宽松）
+
+im_import:
+  time_gap_minutes: 30     # 相邻消息超过该间隔 → 切分为新对话
+  min_rounds: 4            # 每个主题窗口最少消息条数
+  max_rounds: 8            # 每个主题窗口最多消息条数
+
+collector:
+  basic_target: 70           # 基础版人格：可导出训练的最低有效样本数
+  optimal_target: 120        # 完整版人格：最优训练体量（达标后关闭主动采集）
+  idle_minutes: 7            # 会话空闲多少分钟后可主动发起
+  max_proactive_per_session: 1   # 单轮会话最多主动发起次数
+  max_proactive_per_day: 3       # 单日主动话题上限
+  ignore_limit: 2                # 连续无视/拒绝 → 自动降级永久被动
+  ignore_grace_minutes: 15       # 主动消息发出后多久未回应记一次无视
+  short_reply_chars: 4           # assistant 回复少于该字数 → 视为敷衍短句
+  short_reply_ratio_warn: 0.5    # 敷衍短句占比超过该值 → 触发深度表达补齐
+  max_sample_messages: 12        # 单条多轮训练样本的最大消息数（不含 system）
+
+export:
+  val_ratio: 0.05    # 验证集比例
+  seed: 42
