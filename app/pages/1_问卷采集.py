@@ -1,5 +1,9 @@
-"""方案一：场景化问卷快速冷启动。"""
+"""方案一：场景化问卷快速冷启动（支持网页版答卷/已填 CSV 回流导入）。"""
 from __future__ import annotations
+
+import csv
+import io
+import json
 
 import streamlit as st  # pyright: ignore[reportMissingImports]
 from persona_lora import questionnaire  # pyright: ignore[reportMissingImports]
@@ -40,6 +44,34 @@ st.progress(
 )
 
 remaining = [b["idx"] for b in bank if questionnaire.qid(scene, b["idx"]) not in answered]
+
+# ---------------- 导入回流：网页版答卷 / 已填 CSV ----------------
+with st.expander("📥 导入：网页版答卷 answers.json / 已填 CSV（不想逐题填？用这个）"):
+    st.caption(
+        "推荐用手机打开网页版问卷（零安装）：仓库主页 → 在线问卷；填完下载 answers.json 回传这里，"
+        "或下载空白 CSV 用 Excel 填。导入后仍可在下方逐题补答。"
+    )
+    f_json = st.file_uploader("answers.json（网页版导出）", type=["json"], key="up_answers")
+    f_csv = st.file_uploader("已填 CSV（网页模板 / Excel 另存 CSV UTF-8）", type=["csv"], key="up_csv")
+    if f_json is not None:
+        try:
+            doc = json.loads(f_json.getvalue().decode("utf-8"))
+            summary = questionnaire.import_answers(store, doc, scenes, cfg.user_name)
+        except Exception as e:  # noqa: BLE001
+            st.error(f"导入失败：{e}")
+        else:
+            st.toast(f"已导入 {summary['added']} 条，跳过（已答/无效）{summary['skipped']} 条")
+            st.rerun()
+    if f_csv is not None:
+        try:
+            rows = list(csv.DictReader(io.StringIO(f_csv.getvalue().decode("utf-8-sig"))))
+            summary = questionnaire.import_csv_rows(store, rows, scenes, cfg.user_name)
+        except Exception as e:  # noqa: BLE001
+            st.error(f"导入失败：{e}")
+        else:
+            st.toast(f"已导入 {summary['added']} 条，跳过（已答/无效）{summary['skipped']} 条")
+            st.rerun()
+
 if not remaining:
     st.balloons()
     st.success("该场景题库已全部完成 🎉 建议：「对话采集」继续自然积累，或「IM 导入」批量扩容。")

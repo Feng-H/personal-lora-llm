@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>个人人格问卷 · Personal Persona LoRA</title>
+<meta name="description" content="零安装的 LoRA 人格问卷冷启动：浏览器内填写，本地保存，直接导出 Kaggle 训练集。数据永不上传。">
+<meta property="og:title" content="个人人格问卷 · 30 分钟生成你的 AI 分身训练集">
+<meta property="og:description" content="全部在浏览器本地完成：填写 → 导出 train.jsonl → Kaggle 训练 → Ollama 部署。数据不上传任何服务器。">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <span class="brand">🧬 个人人格问卷</span>
+    <span class="save-state" id="saveState">已自动保存</span>
+  </div>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</header>
+
+<main class="page">
+
+  <!-- ======== Hero ======== -->
+  <section class="hero">
+    <p class="kicker">PERSONAL PERSONA LORA · 问卷冷启动</p>
+    <h1>30 分钟，生成你的<br>AI 分身训练集</h1>
+    <p class="sub">全部为「真实场景问答对」——别人会怎么问，你就怎么答。用你平时的口吻，别润色：
+      语气词、口头禅、标点习惯、刻意重复，都是要被复刻的人格。</p>
+    <ul class="privacy-badges">
+      <li>🔒 数据只存在你的浏览器</li>
+      <li>📡 零上传 · 零服务器 · 零账号</li>
+      <li>📦 导出文件由浏览器直接生成</li>
+    </ul>
+    <a class="hero-link" href="#settings">开始填写 ↓</a>
+  </section>
+
+  <!-- ======== Step 1 设置 ======== -->
+  <section class="card" id="settings">
+    <h2><span class="step-no">1</span> 基本设置</h2>
+    <label class="field">
+      <span class="field-label">你的昵称（会写进模型系统提示词，可留空）</span>
+      <input type="text" id="userName" maxlength="20" placeholder="例如：老王">
+    </label>
+    <div class="field">
+      <span class="field-label">采集模式</span>
+      <div class="seg" id="modeSeg">
+        <button type="button" data-mode="single" class="on">单场景专精<small>新手推荐，风格纯净</small></button>
+        <button type="button" data-mode="multi">多场景全能<small>人格切换，需更多样本</small></button>
+      </div>
+    </div>
+    <div class="field">
+      <span class="field-label">勾选要复刻的人格场景</span>
+      <div class="chips" id="sceneChips"></div>
+    </div>
+    <p class="hint" id="sceneHint"></p>
+  </section>
+
+  <!-- ======== Step 2 填写 ======== -->
+  <section class="card" id="fill">
+    <h2><span class="step-no">2</span> 填写问卷</h2>
+    <div class="tabs" id="sceneTabs"></div>
+    <div id="questionList"></div>
+    <p class="hint">✍️ 想怎么说话就怎么打字：省略号、感叹号、重复强调、口语瑕疵——统统保留。
+      含手机号/身份证/邮箱会自动打码并提示。跳过不想答的题完全可以。</p>
+  </section>
+
+  <!-- ======== Step 3 导出 ======== -->
+  <section class="card" id="export">
+    <h2><span class="step-no">3</span> 导出</h2>
+    <div id="readiness"></div>
+    <div class="btn-grid">
+      <button type="button" class="btn primary" id="btnTrain">🚀 下载 train.jsonl<small>直接上传 Kaggle 训练</small></button>
+      <button type="button" class="btn" id="btnAnswers">💾 下载 answers.json<small>回本地工作台继续积累</small></button>
+      <button type="button" class="btn" id="btnCsvTpl">📄 下载空白 CSV 模板<small>喜欢 Excel 离线填？用这个</small></button>
+    </div>
+    <details class="import-details">
+      <summary>导入：answers.json 或已填 CSV（换设备 / Excel 回填）</summary>
+      <div class="import-body">
+        <label class="file-btn">导入 answers.json<input type="file" id="fileAnswers" accept=".json" hidden></label>
+        <label class="file-btn">导入已填 CSV<input type="file" id="fileCsv" accept=".csv" hidden></label>
+        <p class="hint" id="importMsg"></p>
+      </div>
+    </details>
+    <details class="danger-details">
+      <summary>清空本页所有填写记录</summary>
+      <div class="import-body">
+        <button type="button" class="btn danger" id="btnReset">🗑️ 清空 localStorage</button>
+      </div>
+    </details>
+  </section>
+
+  <footer class="foot">
+    <p><strong>隐私承诺：</strong>本页是纯静态网页，无后端、无统计、无 Cookie 追踪。
+      填写内容仅保存在当前浏览器 localStorage，导出文件直接从内存下载到你的磁盘。</p>
+    <p>本页是开源项目 <a href="https://github.com/Feng-H/personal-lora-llm" target="_blank" rel="noopener">personal-lora-llm</a>
+      的问卷冷启动入口 · 想要对话采集 / IM 历史抽取 → 克隆仓库跑本地工作台 ·
+      <a href="https://feng-h.github.io/finetune-colab-kaggle-mac/" target="_blank" rel="noopener">训练原理见姊妹专著</a></p>
+  </footer>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script src="data/bank.js"></script>
+<script src="app.core.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

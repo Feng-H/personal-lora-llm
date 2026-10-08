@@ -1,14 +1,17 @@
-"""命令行入口：python -m persona_lora.cli <stats|export|im-import>"""
+"""命令行入口：python -m persona_lora.cli <stats|export|im-import|import-answers>"""
 from __future__ import annotations
 
 import argparse
+import csv as csv_mod
 import json
 import sys
+from pathlib import Path
 
 from .config import load_config
 from .export import ExportError, export_dataset
 from .im_import import run_pipeline
 from .llm import LLMClient
+from .questionnaire import import_answers, import_csv_rows
 from .scenes import load_scenes, selected_scenes
 from .stats import dataset_stats, scene_gaps
 from .store import SampleStore
@@ -63,6 +66,20 @@ def cmd_im_import(args: argparse.Namespace) -> None:
     print("👉 所有样本为 pending 状态，请用 Streamlit 审核面板确认：streamlit run app/Home.py")
 
 
+def cmd_import_answers(args: argparse.Namespace) -> None:
+    cfg, scenes, store = _ctx()
+    path = Path(args.file)
+    if path.suffix.lower() == ".csv":
+        with path.open(encoding="utf-8-sig", newline="") as f:
+            rows = list(csv_mod.DictReader(f))
+        summary = import_csv_rows(store, rows, scenes, cfg.user_name)
+    else:
+        doc = json.loads(path.read_text(encoding="utf-8"))
+        summary = import_answers(store, doc, scenes, cfg.user_name)
+    print(json.dumps(summary, ensure_ascii=False))
+    print("✅ 已导入问卷样本（网页版 answers.json / 已填 CSV，可在审核面板查看）")
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(prog="persona_lora", description="个人人格 LoRA 工作流")
     sub = parser.add_subparsers(dest="cmd", required=True)
@@ -75,8 +92,17 @@ def main() -> None:
     p_im.add_argument("--me", required=True, help="你的昵称（多个逗号分隔）")
     p_im.add_argument("--no-llm", action="store_true", help="跳过 LLM 质检（纯规则模式）")
 
+    p_ia = sub.add_parser("import-answers", help="导入网页版答卷（answers.json 或已填 CSV）")
+    p_ia.add_argument("--file", required=True, help="answers.json 或 CSV 路径")
+
     args = parser.parse_args()
-    {"stats": cmd_stats, "export": cmd_export, "im-import": cmd_im_import}[args.cmd](args)
+    handlers = {
+        "stats": cmd_stats,
+        "export": cmd_export,
+        "im-import": cmd_im_import,
+        "import-answers": cmd_import_answers,
+    }
+    handlers[args.cmd](args)
 
 
 if __name__ == "__main__":

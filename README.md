@@ -33,9 +33,25 @@
                               LoRA 适配器 → GGUF / MLX → 本地纯模型推理
 ```
 
-## 🚀 极速上手
+## 🚀 极速上手：两种入口，按需选择
 
-### 1. 安装（本地，Python 3.10+）
+### 入口 A · 网页版问卷（零安装，手机也能填）🆕
+
+打开**在线问卷**（本仓库 GitHub Pages：`Settings → Pages → Source 选 GitHub Actions` 后自动发布，地址 `https://<你的用户名>.github.io/personal-lora-llm/`；本项目官方地址见仓库主页），浏览器里直接填：
+
+```text
+网页填问卷（30 分钟）→ 浏览器直接下载 train.jsonl → 上传你的 Kaggle 训练
+→ 下载 GGUF → ollama run 我的分身
+```
+
+- 数据只存在浏览器 localStorage，零上传零服务器（见 docs/web.md 隐私模型）
+- 不想逐题填？网页可下载**空白 CSV 模板**用 Excel 离线填再回传，或下载
+  `answers.json` 后回传本地工作台，与对话/IM 样本合并
+- 入口 B 需要的功能（对话采集、IM 抽取）依赖本地 LLM/向量模型，网页无法承载
+
+### 入口 B · 本地工作台（全功能）
+
+#### 1. 安装（本地，Python 3.10+）
 
 ```bash
 git clone https://github.com/Feng-H/personal-lora-llm.git
@@ -51,13 +67,13 @@ ollama serve &
 ollama pull qwen3:8b
 ```
 
-### 2. 打开工作台
+#### 2. 打开工作台
 
 ```bash
 streamlit run app/Home.py
 ```
 
-### 3. 三通道攒数据
+#### 3. 三通道攒数据
 
 | 通道 | 入口 | 产出 |
 | --- | --- | --- |
@@ -67,11 +83,11 @@ streamlit run app/Home.py
 
 样本目标：**≥70 条可训练（基础版人格），≥120 条最优（完整版人格）**。
 
-### 4. Kaggle 一键训练
+#### 4. Kaggle 一键训练
 
 工作台「导出训练」页下载 `train.jsonl` → 按 [docs/kaggle_guide.md](docs/kaggle_guide.md) 上传运行 `notebooks/kaggle_persona_lora.ipynb`（免费 T4，默认 Qwen3.5-6B + 4bit + LoRA r16 + epoch 3 + 早停，约 2-3 小时，产出几十 MB 适配器）。
 
-### 5. 本地部署你的分身
+#### 5. 本地部署你的分身
 
 ```bash
 # Ollama（全平台）
