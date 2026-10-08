@@ -4,6 +4,7 @@
 [![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-3776AB)](https://python.org)
 [![Streamlit](https://img.shields.io/badge/UI-Streamlit-FF4B4B)](https://streamlit.io)
 [![Train on Kaggle T4](https://img.shields.io/badge/Train-Kaggle_T4_Free-20BEFF)](https://kaggle.com)
+[![在线问卷](https://img.shields.io/badge/在线问卷-GitHub_Pages-blue)](https://feng-h.github.io/personal-lora-llm/)
 
 > **完全私有化 · 用户自助 · 零服务端** 的「真实人类语言人格复刻 LoRA」全自动工作流。
 > 不复刻标准答案，只复刻真实人格：语气词、口头禅、标点风格、换行习惯、刻意重复强调、个人口语瑕疵——全部保留。
@@ -37,7 +38,7 @@
 
 ### 入口 A · 网页版问卷（零安装，手机也能填）🆕
 
-打开**在线问卷**（本仓库 GitHub Pages：`Settings → Pages → Source 选 GitHub Actions` 后自动发布，地址 `https://<你的用户名>.github.io/personal-lora-llm/`；本项目官方地址见仓库主页），浏览器里直接填：
+打开**在线问卷** 👉 **https://feng-h.github.io/personal-lora-llm/** ，浏览器里直接填（fork 用户开自己的 Pages 后是 `https://<你的用户名>.github.io/personal-lora-llm/`，见 docs/web.md）：
 
 ```text
 网页填问卷（30 分钟）→ 浏览器直接下载 train.jsonl → 上传你的 Kaggle 训练
