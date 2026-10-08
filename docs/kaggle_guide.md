@@ -45,6 +45,21 @@ https://github.com/Feng-H/personal-lora-llm/blob/main/notebooks/kaggle_persona_l
 - 数据集 slug 在 `notebooks/kernel-metadata.json` 的 `dataset_sources`（默认 `my-persona-data`，与你上传时命名一致即可自动预挂；不存在则自动降级为不挂载并提示）
 - 也可配 GitHub Actions 全自动同步：`.github/workflows/kaggle-sync.yml`（需在仓库 Secrets 配 `KAGGLE_USERNAME`/`KAGGLE_KEY`，手动触发）
 
+### 🔐 Kaggle token 安全说明（重要）
+
+**token 不会进入仓库，别人看不到。** 两条路径的去向：
+
+| 路径 | token 存哪 | 谁能看到 |
+| --- | --- | --- |
+| 本地 CLI | 仅你电脑的 `~/.kaggle/kaggle.json`（仓库目录之外，git 根本接触不到） | 只有你 |
+| GitHub Actions 同步 | 仓库 **Secrets**（加密存储；日志自动打码；fork 的 PR 拿不到；只有仓库写权限者可触发使用） | 只有你 |
+
+额外保险：
+- 本仓库 `.gitignore` 已排除 `kaggle.json`，即使误拷进仓库目录也不会被提交
+- token 等同于 Kaggle 账号密码：不要发给任何人、不要截图发群
+- 可随时作废：https://www.kaggle.com/settings → API → **Expire Token**，立即失效
+
+
 ### 方式 C · 手动上传
 
 **File → Import Notebook** → 上传本地 `notebooks/kaggle_persona_lora.ipynb`，再同方式 A 手动配数据集与算力。

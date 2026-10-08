@@ -55,10 +55,23 @@ embedding 模型（bge-small-zh），纯静态页无法承载；而问卷通道�
 
 ## 自定义题库并发布自己的问卷站
 
+### Fork 用户上线自己的站点（4 步，约 2 分钟）
+
+Fork 后你仓库里的网页和题库就是你的了，但 GitHub 出于安全默认不自动跑别人的 workflow，需手动激活一次：
+
+1. 打开你 fork 仓库的 **Actions** 标签页 → 点击绿色按钮 **「I understand my workflows, go ahead and enable them」** 启用 workflow
+2. **Settings → Pages → Build and deployment → Source** 选 **GitHub Actions**
+3. **Actions → 左侧 “Deploy questionnaire site to Pages” → Run workflow**（已内置手动触发，无需造新提交）
+4. 等待绿勾后访问：`https://<你的用户名>.github.io/personal-lora-llm/`
+
+之后每次 push 触碰 `web/`、`questionnaires/`、`config/scenes/` 等路径会自动重新部署。
+（站内资源全部是相对路径，在任何仓库名/子路径下都能正常加载）
+
+### 自定义题库
+
 1. 改 `questionnaires/*.csv` 和 `config/scenes/*.yaml`（题库单一数据源）
 2. `python scripts/build_web_bank.py` 重新生成 bank.js
-3. Fork 本仓库 → Settings → Pages → Source 选 **GitHub Actions** → push 即自动部署
-   （CI 会先 `--check` 校验 bank.js 与源头一致，防止忘重新生成）
+3. push 后 CI 自动校验 bank.js 与源头一致并部署
 
 ## 本地预览网页
 
