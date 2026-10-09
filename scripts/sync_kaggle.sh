@@ -8,9 +8,10 @@
 #   ./scripts/sync_kaggle.sh pull               # Kaggle → notebooks/.kaggle_pull/（查看改动）
 #   ./scripts/sync_kaggle.sh pull --apply       # Kaggle → 覆盖仓库 notebook（回写改动）
 #
-# 一次性准备（仅需做一次）：
-#   1. 打开 https://www.kaggle.com/settings → API → Create New Token（下载 kaggle.json）
-#   2. mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json
+# 一次性准备（仅需做一次，三选一）：
+#   A. 新式：https://www.kaggle.com/settings → API 生成 token
+#      → 写入 ~/.kaggle/access_token 并 chmod 600（或 export KAGGLE_API_TOKEN）
+#   B. 旧式：Create New Token 下载 kaggle.json → 放 ~/.kaggle/ 并 chmod 600
 set -euo pipefail
 
 REPO="$(cd "$(dirname "$0")/.." && pwd)"
@@ -34,14 +35,26 @@ PY
 }
 
 require_token() {
-  [ -f "$HOME/.kaggle/kaggle.json" ] || die "未找到 ~/.kaggle/kaggle.json
-   一次性准备：https://www.kaggle.com/settings → API → Create New Token
-   然后：mkdir -p ~/.kaggle && mv ~/Downloads/kaggle.json ~/.kaggle/ && chmod 600 ~/.kaggle/kaggle.json"
+  local ok=0
+  [ -f "$HOME/.kaggle/access_token" ] && ok=1   # 新式单 token（settings UI 生成）
+  [ -f "$HOME/.kaggle/kaggle.json" ] && ok=1    # 旧式 username+key
+  [ -n "${KAGGLE_API_TOKEN:-}" ] && ok=1        # 环境变量
+  [ "$ok" = 1 ] || die "未找到 Kaggle 凭证（三选一）：
+   A. 新式 token：https://www.kaggle.com/settings → API 生成 → 写入 ~/.kaggle/access_token（chmod 600）
+   B. 旧式：kaggle.json 放 ~/.kaggle/（chmod 600）
+   C. 环境变量 KAGGLE_API_TOKEN"
   [ -n "$KAGGLE" ] || die "kaggle CLI 不可用：pip install kaggle（项目 venv 已含）"
 }
 
 kaggle_username() {
-  python3 -c "import json;print(json.load(open('$HOME/.kaggle/kaggle.json'))['username'])"
+  # 优先 kaggle config view（新旧认证都支持，CLI 自动联网识别）；失败再读旧式 kaggle.json
+  local u
+  u="$($KAGGLE config view 2>/dev/null | sed -n 's/^- username: //p' | head -1)"
+  if [ -z "$u" ] && [ -f "$HOME/.kaggle/kaggle.json" ]; then
+    u="$(python3 -c "import json;print(json.load(open('$HOME/.kaggle/kaggle.json'))['username'])" 2>/dev/null || true)"
+  fi
+  [ -n "$u" ] || die "无法识别 Kaggle 用户名（先运行 kaggle config view 检查认证）"
+  echo "$u"
 }
 
 check_mode() {
@@ -109,7 +122,13 @@ json.dump(m, open(p, 'w'), indent=2)"
   fi
   say "$out"
   say "✅ 已推送。→ https://www.kaggle.com/code/$USER/$(kernel_slug)"
-  say "   数据集已按 metadata 预挂；GPU/Internet 已启用，直接 Run All 即可。"
+  if echo "$out" | grep -qi "not valid dataset"; then
+    say "⚠️  数据集 $USER/my-persona-data 尚不存在，本次未预挂。"
+    say "   上传训练数据集（slug 与 metadata 一致）后重新 push 即自动挂载；"
+    say "   或到 Kaggle UI 右侧 Add Input 手动挂。其余配置（GPU/Internet/private）已生效。"
+  else
+    say "   数据集已按 metadata 预挂；GPU/Internet 已启用，直接 Run All 即可。"
+  fi
 }
 
 pull_mode() {
