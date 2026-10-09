@@ -81,7 +81,7 @@ def cmd_import_answers(args: argparse.Namespace) -> None:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(prog="persona_lora", description="个人人格 LoRA 工作流")
+    parser = argparse.ArgumentParser(prog="persona_lora", description="个人风格 LoRA 工作流")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     sub.add_parser("stats", help="查看数据集统计与场景缺口")

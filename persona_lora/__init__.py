@@ -1,4 +1,4 @@
-"""Personal Persona LoRA —— 个人真实人格 AI-LoRA 复刻系统核心库。
+"""Personal Persona LoRA —— 个人真实风格 AI-LoRA 复刻系统核心库。
 
 三通道数据采集（问卷冷启动 / 双向对话 Agent / IM 历史抽取）
 → 统一清洗质检 → messages jsonl 训练集 → Kaggle Unsloth LoRA 训练 → 本地多格式部署。

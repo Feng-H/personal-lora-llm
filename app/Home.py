@@ -1,18 +1,18 @@
-"""个人人格 LoRA 工作台首页：总览 + 场景配置 + 采集进度仪表盘。"""
+"""个人风格 LoRA 工作台首页：总览 + 场景配置 + 采集进度仪表盘。"""
 from __future__ import annotations
 
 import streamlit as st  # pyright: ignore[reportMissingImports]
 
 from common import fresh_stats, get_cfg, get_scenes, llm_status, save_user_settings
 
-st.set_page_config(page_title="人格 LoRA 工作台", page_icon="🧬", layout="wide")
+st.set_page_config(page_title="风格 LoRA 工作台", page_icon="🧬", layout="wide")
 
 cfg = get_cfg()
 scenes = get_scenes()
 
 # ---------------- 侧边栏：用户设置 ----------------
 with st.sidebar:
-    st.header("🧬 我的人格分身")
+    st.header("🧬 我的风格分身")
     name = st.text_input("你的昵称（用于系统提示词）", value=cfg.user_name, max_chars=20)
     mode = st.radio(
         "采集模式",
@@ -22,7 +22,7 @@ with st.sidebar:
     )
     current = list(cfg.get("user.scenes", []) or [])
     scene_ids = st.multiselect(
-        "勾选要复刻的人格场景",
+        "勾选要复刻的风格场景",
         options=list(scenes.keys()),
         default=[s for s in current if s in scenes],
         format_func=lambda sid: f"{scenes[sid].icon} {scenes[sid].name}",
@@ -41,7 +41,7 @@ with st.sidebar:
     st.caption("配置 Ollama 后自动启用：`ollama serve` + `ollama pull qwen3:8b`")
 
 # ---------------- 主区：总览 ----------------
-st.title("🧬 个人真实人格 AI-LoRA 全自动复刻系统")
+st.title("🧬 个人真实风格 AI-LoRA 全自动复刻系统")
 st.caption(
     "问卷冷启动 + AI 双向对话积累 + IM 历史抽取 → 本地清洗质检 → Kaggle Unsloth 训练 → 纯 LoRA 推理"
 )

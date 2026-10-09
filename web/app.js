@@ -1,4 +1,4 @@
-/* 个人人格问卷 · DOM 交互（localStorage 自动保存 / 导出 / 导入）
+/* 个人风格问卷 · DOM 交互（localStorage 自动保存 / 导出 / 导入）
  * 安全约定：所有动态内容一律 createElement + textContent 构建，不用 innerHTML
  * （题库内容来自用户可自定义的 CSV，按不可信输入处理）
  */
@@ -102,7 +102,7 @@
     var n = state.scenes.length;
     $("sceneHint").textContent = state.mode === "multi"
       ? "多场景全能：已选 " + n + " 个场景。导出时每个场景都必须达到最低样本数（默认 45 条/场景），防止风格混杂。"
-      : "单场景专精：只训练单一人格，风格纯净、快速成型。目标 70 条起。";
+      : "单场景专精：只训练单一风格，纯净不串味、快速成型。目标 70 条起。";
   }
 
   function answeredIn(scene) {
@@ -224,7 +224,7 @@
         + ready.weakScenes.map(function (w) { return w.name + " 缺 " + w.gap + " 条"; }).join("、")
         + "。补齐后再导出可防风格混杂（也可确认后试导出）。");
     } else if (ready.okOptimal) {
-      note = el("p", "ok-note", "🎉 已达最优体量（≥120 条）：直接下载 train.jsonl 上传 Kaggle 即可训练完整版人格。");
+      note = el("p", "ok-note", "🎉 已达最优体量（≥120 条）：直接下载 train.jsonl 上传 Kaggle 即可训练完整版风格。");
     } else if (ready.okBasic) {
       note = el("p", "ok-note", "✅ 已达基础线（≥70 条）：可以导出训练。继续积累到 120 条效果更完整。");
     } else {

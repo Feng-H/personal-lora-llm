@@ -27,8 +27,8 @@ im_import:
   max_rounds: 8            # 每个主题窗口最多消息条数
 
 collector:
-  basic_target: 70           # 基础版人格：可导出训练的最低有效样本数
-  optimal_target: 120        # 完整版人格：最优训练体量（达标后关闭主动采集）
+  basic_target: 70           # 基础版风格：可导出训练的最低有效样本数
+  optimal_target: 120        # 完整版风格：最优训练体量（达标后关闭主动采集）
   idle_minutes: 7            # 会话空闲多少分钟后可主动发起
   max_proactive_per_session: 1   # 单轮会话最多主动发起次数
   max_proactive_per_day: 3       # 单日主动话题上限

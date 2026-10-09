@@ -1,6 +1,6 @@
 """数据清洗（铁律实现）。
 
-人格特征全部保留：语气词、口头禅、感叹号、换行、刻意重复强调、标点习惯。
+风格特征全部保留：语气词、口头禅、感叹号、换行、刻意重复强调、标点习惯。
 仅剔除纯噪声：乱码、链接、表情包占位、系统消息、无意义单字碎片；
 隐私明文不删除、只打码 + 标记【风险】，最终决策权永远归用户。
 """
@@ -27,7 +27,7 @@ SYSTEM_NOTICE = re.compile(
     r"朋友验证|暂不支持的消息类型|以上消息|下列消息|对方正在输入|消息已发出，但被对方拒收)"
 )
 MOJIBAKE = re.compile(r"(ï¿½|Ã¢|â€|ï»¿|å¼|é”™|çš„)")
-# 无意义单字碎片：单个 ASCII 字母/数字/标点（中文单字如"嗯/哦/好"是人格，保留）
+# 无意义单字碎片：单个 ASCII 字母/数字/标点（中文单字如"嗯/哦/好"是风格，保留）
 FRAGMENT = re.compile(r"^[a-zA-Z0-9\W_]$")
 
 TRAILING_NOISE = re.compile(r"[\s\u200b\ufeff]+")
@@ -75,7 +75,7 @@ def clean_text(text: str) -> dict:
 
 
 def scan_flags(messages: list[dict]) -> list[str]:
-    """对样本做规则质检：只标记、不删除、不去重（刻意重复是人格特征）。"""
+    """对样本做规则质检：只标记、不删除、不去重（刻意重复是风格特征）。"""
     flags: list[str] = []
     assistant_texts = [m["content"] for m in messages if m.get("role") == "assistant"]
     joined = "\n".join(assistant_texts)

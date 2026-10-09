@@ -26,7 +26,7 @@ def export_dataset(
     usable_samples = usable(samples)
     if len(usable_samples) < min_total:
         raise ExportError(
-            f"有效样本仅 {len(usable_samples)} 条，低于最低阈值 {min_total} 条（基础版人格）。"
+            f"有效样本仅 {len(usable_samples)} 条，低于最低阈值 {min_total} 条（基础版风格）。"
         )
     # 多场景模式强制校验：每个勾选场景都须达到最低阈值，防止风格混杂
     stats = dataset_stats(samples, scenes, [s.id for s in selected])

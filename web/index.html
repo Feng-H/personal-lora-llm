@@ -3,9 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>个人人格问卷 · Personal Persona LoRA</title>
-<meta name="description" content="零安装的 LoRA 人格问卷冷启动：浏览器内填写，本地保存，直接导出 Kaggle 训练集。数据永不上传。">
-<meta property="og:title" content="个人人格问卷 · 30 分钟生成你的 AI 分身训练集">
+<title>个人风格问卷 · Personal Persona LoRA</title>
+<meta name="description" content="零安装的 LoRA 风格问卷冷启动：浏览器内填写，本地保存，直接导出 Kaggle 训练集。数据永不上传。">
+<meta property="og:title" content="个人风格问卷 · 30 分钟生成你的 AI 分身训练集">
 <meta property="og:description" content="全部在浏览器本地完成：填写 → 导出 train.jsonl → Kaggle 训练 → Ollama 部署。数据不上传任何服务器。">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🧬</text></svg>">
 <link rel="stylesheet" href="style.css">
@@ -14,7 +14,7 @@
 
 <header class="topbar">
   <div class="topbar-inner">
-    <span class="brand">🧬 个人人格问卷</span>
+    <span class="brand">🧬 个人风格问卷</span>
     <span class="save-state" id="saveState">已自动保存</span>
   </div>
   <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
@@ -27,7 +27,7 @@
     <p class="kicker">PERSONAL PERSONA LORA · 问卷冷启动</p>
     <h1>30 分钟，生成你的<br>AI 分身训练集</h1>
     <p class="sub">全部为「真实场景问答对」——别人会怎么问，你就怎么答。用你平时的口吻，别润色：
-      语气词、口头禅、标点习惯、刻意重复，都是要被复刻的人格。</p>
+      语气词、口头禅、标点习惯、刻意重复，都是要被复刻的风格。</p>
     <ul class="privacy-badges">
       <li>🔒 数据只存在你的浏览器</li>
       <li>📡 零上传 · 零服务器 · 零账号</li>
@@ -47,11 +47,11 @@
       <span class="field-label">采集模式</span>
       <div class="seg" id="modeSeg">
         <button type="button" data-mode="single" class="on">单场景专精<small>新手推荐，风格纯净</small></button>
-        <button type="button" data-mode="multi">多场景全能<small>人格切换，需更多样本</small></button>
+        <button type="button" data-mode="multi">多场景全能<small>风格切换，需更多样本</small></button>
       </div>
     </div>
     <div class="field">
-      <span class="field-label">勾选要复刻的人格场景</span>
+      <span class="field-label">勾选要复刻的风格场景</span>
       <div class="chips" id="sceneChips"></div>
     </div>
     <p class="hint" id="sceneHint"></p>

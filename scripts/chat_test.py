@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""本地人格模型对话测试（走 Ollama OpenAI 兼容接口）。
+"""本地风格模型对话测试（走 Ollama OpenAI 兼容接口）。
 
 用法：
     python scripts/chat_test.py                     # 默认模型 my-persona
@@ -23,7 +23,7 @@ SYSTEM = (
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="人格模型本地对话测试")
+    parser = argparse.ArgumentParser(description="风格模型本地对话测试")
     parser.add_argument("--model", default="my-persona")
     parser.add_argument("--base-url", default="http://localhost:11434/v1")
     parser.add_argument("--api-key", default="ollama")

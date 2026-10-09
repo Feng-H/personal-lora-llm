@@ -17,7 +17,7 @@ store = get_store()
 collector = agent_chat.PersonaCollector(cfg, store, scenes, get_llm())
 
 st.title("💬 双向对话采集")
-st.caption("像平时聊天一样说话即可。AI 扮演「别人」，你说的每句话都在沉淀你的语言人格。")
+st.caption("像平时聊天一样说话即可。AI 扮演「别人」，你说的每句话都在沉淀你的语言风格。")
 
 selected = [s for s in cfg.get("user.scenes", []) if s in scenes]
 if not selected:
