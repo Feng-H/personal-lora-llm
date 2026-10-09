@@ -1,22 +1,31 @@
-name: Sync notebook to Kaggle (manual)
+name: Sync notebook to Kaggle
 
-# 可选的自动同步：把 notebooks/kaggle_persona_lora.ipynb 推到你的 Kaggle 账号。
-# 启用步骤（一次性）：
-#   1. https://www.kaggle.com/settings → API → Create New Token（得到 kaggle.json，
-#      里面有 username 和 key）
-#   2. 本仓库 Settings → Secrets and variables → Actions → New repository secret：
-#      KAGGLE_USERNAME = 你的用户名
-#      KAGGLE_KEY      = token 里的 key
-#   3. Actions → Sync notebook to Kaggle → Run workflow
+# Fork 即用：无需克隆仓库，配 1 个 Secret 即可自动同步 notebook 到你的 Kaggle。
 #
-# 数据集说明：metadata 默认挂载 <用户名>/my-persona-data；若该数据集不存在，
-# 脚本会自动降级为不挂载（到 Kaggle UI 手动 Add Input 即可）。
+# ── Fork 用户一次性配置（约 2 分钟）────────────────────────────
+# 1. 打开自己 fork 仓库的 Actions 标签页 → 绿色按钮启用 workflows
+# 2. https://www.kaggle.com/settings → API → 生成 token（复制那串字符）
+# 3. 仓库 Settings → Secrets and variables → Actions → New repository secret：
+#      Name:  KAGGLE_API_TOKEN
+#      Value: 粘贴 token
+#    （旧式 kaggle.json 用户改为配 KAGGLE_USERNAME + KAGGLE_KEY 两个 secret）
+# 4. Actions → Sync notebook to Kaggle → Run workflow
+# 之后 notebook / 同步脚本有更新时，push 到 main 即自动同步。
+#
+# 安全：Secrets 加密存储、日志自动打码、fork 来的 PR 拿不到；
+#       永远不要把 token 粘贴到 issue / PR / 代码文件里。
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - "notebooks/**"
+      - "scripts/sync_kaggle.sh"
+      - ".github/workflows/kaggle-sync.yml"
   workflow_dispatch:
     inputs:
       attach_dataset:
-        description: "预挂载数据集 my-persona-data（不存在则自动跳过）"
+        description: "预挂数据集 <你的用户名>/my-persona-data（不存在则自动跳过）"
         type: boolean
         default: true
 
@@ -36,15 +45,49 @@ jobs:
       - name: Install kaggle CLI
         run: pip install kaggle
 
-      - name: Auth
-        run: |
-          mkdir -p ~/.kaggle
-          printf '{"username":"%s","key":"%s"}' \
-            "${{ secrets.KAGGLE_USERNAME }}" "${{ secrets.KAGGLE_KEY }}" \
-            > ~/.kaggle/kaggle.json
-          chmod 600 ~/.kaggle/kaggle.json
-
-      - name: Push kernel
+      - name: Sync notebook to Kaggle
         env:
-          ATTACH: ${{ inputs.attach_dataset && '' || '--no-dataset' }}
-        run: ./scripts/sync_kaggle.sh push ${ATTACH}
+          KAGGLE_API_TOKEN: ${{ secrets.KAGGLE_API_TOKEN }}
+          LEGACY_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
+          LEGACY_KEY: ${{ secrets.KAGGLE_KEY }}
+          EVENT: ${{ github.event_name }}
+          ATTACH_INPUT: ${{ inputs.attach_dataset }}
+        run: |
+          set -e
+
+          # ---------- 凭证准备（新式单 token 优先，旧式双 secret 兼容） ----------
+          if [ -n "$KAGGLE_API_TOKEN" ]; then
+            echo "✓ 凭证：KAGGLE_API_TOKEN（新式单 token，用户名将自动识别）"
+            unset LEGACY_USERNAME LEGACY_KEY
+          elif [ -n "$LEGACY_USERNAME" ] && [ -n "$LEGACY_KEY" ]; then
+            echo "✓ 凭证：KAGGLE_USERNAME + KAGGLE_KEY（旧式，转写为 kaggle.json）"
+            mkdir -p ~/.kaggle
+            printf '{"username":"%s","key":"%s"}' \
+              "$LEGACY_USERNAME" "$LEGACY_KEY" \
+              > ~/.kaggle/kaggle.json
+            chmod 600 ~/.kaggle/kaggle.json
+            unset KAGGLE_API_TOKEN
+          else
+            echo "未配置 Kaggle 凭证，跳过同步。"
+            echo ""
+            echo "===== Fork 用户启用自动同步（一次性，2 分钟）====="
+            echo "1. https://www.kaggle.com/settings → API → 生成 token"
+            echo "2. 本仓库 Settings → Secrets and variables → Actions"
+            echo "     → New repository secret"
+            echo "     Name:  KAGGLE_API_TOKEN"
+            echo "     Value: 粘贴 token"
+            echo "3. Actions → Sync notebook to Kaggle → Run workflow"
+            if [ "$EVENT" = "workflow_dispatch" ]; then
+              echo "::error::手动触发需要凭证：请按上方 3 步配置后重新 Run workflow"
+              exit 1
+            fi
+            exit 0
+          fi
+
+          # ---------- 推送 ----------
+          EXTRA=""
+          if [ "$EVENT" = "workflow_dispatch" ] && \
+             [ "$ATTACH_INPUT" = "false" ]; then
+            EXTRA="--no-dataset"
+          fi
+          ./scripts/sync_kaggle.sh push $EXTRA

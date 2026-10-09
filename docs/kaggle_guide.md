@@ -43,7 +43,24 @@ https://github.com/Feng-H/personal-lora-llm/blob/main/notebooks/kaggle_persona_l
 ```
 
 - 数据集 slug 在 `notebooks/kernel-metadata.json` 的 `dataset_sources`（默认 `my-persona-data`，与你上传时命名一致即可自动预挂；不存在则自动降级为不挂载并提示）
-- 也可配 GitHub Actions 全自动同步：`.github/workflows/kaggle-sync.yml`（需在仓库 Secrets 配 `KAGGLE_USERNAME`/`KAGGLE_KEY`，手动触发）
+
+### 方式 B+ · Fork 用户零克隆全自动（GitHub Actions，推荐普通用户）
+
+不想克隆仓库、不开终端？Fork 之后 4 步：
+
+1. Fork 本仓库，打开自己仓库的 **Actions** 标签页 → 绿色按钮启用 workflows
+2. https://www.kaggle.com/settings → **API** → 生成 token（复制那串字符）
+3. 你的仓库 **Settings → Secrets and variables → Actions → New repository secret**：
+   - Name: `KAGGLE_API_TOKEN`
+   - Value: 粘贴 token → Add secret
+4. **Actions → Sync notebook to Kaggle → Run workflow**（以后 notebook 更新，push 后自动同步）
+
+工作流会自动：识别你的 Kaggle 用户名 → 创建/更新你的 kernel（private + GPU + Internet）→
+预挂数据集（不存在则提示跳过）。旧式 kaggle.json 用户也可改配
+`KAGGLE_USERNAME` + `KAGGLE_KEY` 两个 secret，效果相同。
+
+安全要点（务必看）：token 只存于你自己仓库的 Secrets（加密、日志打码、fork PR 拿不到）；
+**永远不要**把 token 粘到 issue、PR、代码文件里；可随时在 Kaggle 设置页 Expire Token 作废。
 
 ### 🔐 Kaggle token 安全说明（重要）
 
