@@ -91,3 +91,9 @@ jobs:
             EXTRA="--no-dataset"
           fi
           ./scripts/sync_kaggle.sh push $EXTRA
+
+          # ---------- GPU 权限提醒与配额展示 ----------
+          echo ""
+          echo "ℹ️  Kaggle GPU 需账号已手机验证："
+          echo "   https://www.kaggle.com/settings → Phone Verification"
+          kaggle quota 2>/dev/null | head -3 || true

@@ -4,6 +4,8 @@
 
 - 本地已完成数据采集与审核，导出了 `train.jsonl`（≥70 条，建议 120+）
 - 注册 [Kaggle](https://www.kaggle.com/) 账号（免费，每周 30h GPU）
+- **GPU 使用前提：账号已完成手机验证**（kaggle.com/settings → Phone Verification，未验证无法选择 GPU）
+  自检命令：`kaggle quota`（能正常输出 GPU 30h 配额行且能消耗，即权限正常）
 
 ## 1. 上传数据集（私有）
 
@@ -96,7 +98,10 @@ https://github.com/Feng-H/personal-lora-llm/blob/main/notebooks/kaggle_persona_l
 
 | 现象 | 处理 |
 | --- | --- |
+| 选不了 GPU / 提示需要验证 | kaggle.com/settings → **Phone Verification**（一次性，验证后即可用 GPU） |
+| 想看 GPU 剩余额度 | 命令行 `kaggle quota`；或个人头像 →_quota（每周重置 30h） |
 | `AssertionError: 未找到 train.jsonl` | 右侧没挂载数据集 → Add Input |
+| 模型加载 404 / PeftConfig error | BASE_MODEL 拼写错或模型不存在；notebook 内备选梯队均已验证存在 |
 | pip 安装失败/超时 | Settings → Internet 没开 |
 | OOM 显存 | `BATCH_SIZE` 改 1；或基座换 3B |
 | loss 早早不降/过拟合 | 已内置早停；也可把 `EPOCHS` 降为 2 |

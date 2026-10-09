@@ -57,6 +57,30 @@ kaggle_username() {
   echo "$u"
 }
 
+has_credentials() {
+  [ -f "$HOME/.kaggle/access_token" ] || [ -f "$HOME/.kaggle/kaggle.json" ] || [ -n "${KAGGLE_API_TOKEN:-}" ]
+}
+
+# GPU 权限检测与提醒：能读配额则展示；读不到或为 0 则提示手机验证
+GPU_VERIFY_HINT="Kaggle GPU 需账号已手机验证：https://www.kaggle.com/settings → Phone Verification"
+gpu_quota_hint() {
+  local q gpu_used gpu_left gpu_total
+  q="$($KAGGLE quota 2>/dev/null || true)"
+  if [ -n "$q" ]; then
+    gpu_used="$(echo "$q"  | awk '$1=="GPU"{print $2}')"
+    gpu_left="$(echo "$q" | awk '$1=="GPU"{print $3}')"
+    gpu_total="$(echo "$q"| awk '$1=="GPU"{print $4}')"
+    if [ -n "${gpu_total}" ] && [ "${gpu_total}" != "0.00h" ]; then
+      say "🖥️  GPU 配额：已用 ${gpu_used}，总量 ${gpu_total}，剩余 ${gpu_left}"
+      say "   （配额仅供参考；若运行时提示无 GPU 权限 → ${GPU_VERIFY_HINT}）"
+    else
+      say "⚠️  GPU 配额为 0，很可能未完成手机验证 → ${GPU_VERIFY_HINT}"
+    fi
+  else
+    say "⚠️  无法读取 GPU 配额（kaggle quota）。${GPU_VERIFY_HINT}"
+  fi
+}
+
 check_mode() {
   python3 - "$META" "$NB" <<'PY'
 import json, sys
@@ -79,6 +103,11 @@ print(f"   notebook: {os.path.basename(nb_path)}")
 for d in meta.get("dataset_sources", []):
     print(f"   dataset: {d}")
 PY
+  if has_credentials && [ -n "${KAGGLE:-}" ]; then
+    gpu_quota_hint
+  else
+    say "ℹ️  未配置 Kaggle 凭证，跳过 GPU 配额检查。$GPU_VERIFY_HINT"
+  fi
 }
 
 push_mode() {
@@ -129,6 +158,7 @@ json.dump(m, open(p, 'w'), indent=2)"
   else
     say "   数据集已按 metadata 预挂；GPU/Internet 已启用，直接 Run All 即可。"
   fi
+  gpu_quota_hint
 }
 
 pull_mode() {

@@ -5,8 +5,12 @@
 | 基座模型 | Kaggle T4（免费） | 时长参考 | 说明 |
 | --- | --- | --- | --- |
 | Qwen2.5-3B-Instruct | ✅ 轻松 | ~1 小时 | 极低门槛，人格上限较低 |
-| **Qwen3.5-6B-Instruct（默认）** | ✅ 完全够用 | 2–3 小时 | 性价比最优，主推 |
-| Qwen3.5-14B-Instruct | ⚠️ 谨慎 | 更久 | 建议有 P100/V100 级别再考虑 |
+| **Qwen3-4B-Instruct-2507（默认）** | ✅ 完全够用 | 1–2 小时 | 无思考模式噪声，风格复刻性价比最优；M1 8G 推理 ~3.4G |
+| Qwen3-8B | ✅ 可训 | 2–3 小时 | 人格表现更强，Mac 推理建议 16G+ |
+| Qwen3-14B | ⚠️ 谨慎 | 更久 | 需更强算力 |
+
+> 以上模型名均已验证存在于 HuggingFace。**Kaggle GPU 需账号完成手机验证**
+> （kaggle.com/settings → Phone Verification）。
 
 - 训练精度：4bit QLoRA（Unsloth），T4 16G 显存无压力
 - 产物：几十 MB LoRA 适配器（不生成完整大模型）
