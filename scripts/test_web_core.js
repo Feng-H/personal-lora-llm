@@ -11,7 +11,7 @@ new Function("globalThis", fs.readFileSync(path.join(__dirname, "../web/data/ban
 const bank = sandbox.PERSONA_BANK;
 
 assert.ok(bank && bank.scenes.length === 7, "7 场景");
-assert.strictEqual(bank.scenes.reduce((n, s) => n + s.questions.length, 0), 92, "92 题");
+assert.strictEqual(bank.scenes.reduce((n, s) => n + s.questions.length, 0), 274, "274 题");
 const wq = bank.scenes.find(s => s.id === "work_communication");
 assert.ok(wq.questions[0].qid === "work_communication#0", "qid 格式");
 
@@ -59,10 +59,10 @@ bank.scenes.find(s => s.id === "daily_social").questions.forEach(q => {
   state.answers[q.qid] = "哈哈哈真的假的！";
 });
 let rows2 = PPLORA.buildTrainRows(bank, state);
-assert.strictEqual(rows2.length, 29, "15+14=29");
+assert.strictEqual(rows2.length, 80, "40+40=80");
 const split = PPLORA.splitTrainVal(rows2, 42, 0.05);
-assert.strictEqual(split.train.length + split.validation.length, 29);
-assert.strictEqual(split.validation.length, Math.max(1, Math.floor(29 * 0.05)), "≥20 条才切 5%");
+assert.strictEqual(split.train.length + split.validation.length, 80);
+assert.strictEqual(split.validation.length, Math.max(1, Math.floor(80 * 0.05)), "≥20 条才切 5%");
 const text = PPLORA.jsonlText(split.train);
 const lines = text.trim().split("\n").map(l => JSON.parse(l));
 assert.ok(lines.every(r => r.messages[r.messages.length - 1].role === "assistant"), "每行以 assistant 结尾");
@@ -71,7 +71,7 @@ assert.ok(lines.every(r => r.messages[r.messages.length - 1].role === "assistant
 const csv = PPLORA.blankCsvText(bank);
 assert.ok(csv.startsWith('"qid","scene_id","scene_name"'), "模板表头");
 const parsed = PPLORA.parseCsv("\ufeff" + csv);
-assert.strictEqual(parsed.length, 92, "模板行数");
+assert.strictEqual(parsed.length, 274, "模板行数");
 const escVal = '有逗号，还有"引号"';
 const quotedCsv = '"qid","answer"\n' + '"a#1"' + ',' + '"' + escVal.replace(/"/g, '""') + '"' + '\n';
 const quoted = PPLORA.parseCsv(quotedCsv);
@@ -88,11 +88,11 @@ assert.strictEqual(res.matched, 1, "CSV 按 qid 命中");
 // ---- exportPack ----
 const pack = PPLORA.exportPack(bank, state, "2026-10-09T00:00:00Z");
 assert.strictEqual(pack.answersDoc.app, "personal-lora-llm-web");
-assert.strictEqual(pack.answersDoc.answers.length, 29, "answers.json 收录已答");
+assert.strictEqual(pack.answersDoc.answers.length, 80, "answers.json 收录已答");
 assert.ok(pack.answersDoc.answers.every(a => a.qid && a.answer), "answer 非空");
-assert.strictEqual(pack.card.totalUsable, 29);
+assert.strictEqual(pack.card.totalUsable, 80);
 const back = PPLORA.mergeAnswersDoc(pack.answersDoc, { name: "", mode: "single", scenes: [], answers: {} });
-assert.ok(back.ok && back.imported === 29, "answers.json 回传合并");
+assert.ok(back.ok && back.imported === 80, "answers.json 回传合并");
 assert.ok(!PPLORA.mergeAnswersDoc({ foo: 1 }, state).ok, "非法文档拒绝");
 
-console.log("✅ web core tests ALL PASS (bank 7 场景/92 题, 样本构建/打码/切分/CSV/导出包)");
+console.log("✅ web core tests ALL PASS (bank 7 场景/274 题, 样本构建/打码/切分/CSV/导出包)");
